@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cherry JS Example</title>
+</head>
+<body>
+  
+  <h1>Example Cherry Application</h1>
+  
+  <div data-cherry="counterController">
+    <p>There 
+      <span data-formatter="pluralise:i" data-format="is / are"></span>
+      <span data-var="i"></span>
+      <span data-formatter="pluralise:i" data-format="bottle / bottles"></span>
+      of beer on the wall
+    </p>
+    <fieldset>
+      <button data-click="add">Add One</button>
+      <button data-click="take">Take One</button>
+    </fieldset>
+  </div>
+  
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+  <script src="../cherry/cherry.js"></script>
+  <script src="../cherry/scope.js"></script>
+  <script src="../cherry/template.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
