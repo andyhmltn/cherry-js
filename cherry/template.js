@@ -13,6 +13,9 @@ var CherryTemplate = function(scope) {
   _template.parent = $('[data-cherry="'+scope.controller+'"]');
   _template.parent.addClass('cherry-watch');
 
+  _template.formatForHTML = function(string) {
+    return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
 
   _template.updateFormatters = function() {
     $(_template.getSection('formatter')).each(function(key, section) {
@@ -35,7 +38,7 @@ var CherryTemplate = function(scope) {
   }
 
   _template.notify = function(key) {
-    var value = _template.scope.get(key);
+    var value = _template.formatForHTML(_template.scope.get(key));
     var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]');
 
     _template.updateFormatters();
