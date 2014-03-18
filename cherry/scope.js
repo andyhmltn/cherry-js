@@ -5,8 +5,6 @@ var CherryScope = function(app, controller) {
   _scope.controller = controller
   _scope.app = app
 
-  _scope.template = new CherryTemplate(this)
-
   _scope.set = function(key, value) {
     _scope.data[key] = value
     return _scope.template.notify(key);
@@ -25,4 +23,6 @@ var CherryScope = function(app, controller) {
     _scope.formatters[name] = callback
     _scope.template.updateFormatters()
   }
+
+  _scope.template = new CherryTemplate(this)
 }

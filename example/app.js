@@ -4,13 +4,14 @@
 
   var counterController = counter.controller('counterController', function(scope) {
     scope.set('i', 1);
+    scope.set('amount', 1);
 
     scope.set('add', function() {
-      scope.set('i', parseInt(scope.get('i')) + 1)
+      scope.set('i', parseInt(scope.get('i')) + parseInt(scope.get('amount')))
     })
 
     scope.set('take', function() {
-      scope.set('i', parseInt(scope.get('i')) - 1)
+      scope.set('i', parseInt(scope.get('i')) - parseInt(scope.get('amount')))
     })
 
     scope.formatter('pluralise', function(value, format) {

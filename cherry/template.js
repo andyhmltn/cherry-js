@@ -36,19 +36,31 @@ var CherryTemplate = function(scope) {
 
   _template.notify = function(key) {
     var value = _template.scope.get(key);
-    var holder = $('[data-var="'+key+'"]');
+    var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]');
 
     _template.updateFormatters();
 
-    holder.html(value);
+    holder.html(value).val(value);
   }
 
-  _template.parent.find('[data-click]').each(function(key,value) {
+
+  _template.getSection('click').each(function(key,value) {
     var _event = $(value).attr('data-click')
 
     $(value).on('click', function() {
       _template.scope.call(_event);
     });
+  });
+
+  _template.getSection('model').each(function(key, input) {
+    var scope_key     = $(input).attr('data-model'),
+        default_value = _template.scope.get(scope_key);
+
+    $(input).val(default_value)
+
+    $(input).on('keyup', function() {
+      _template.scope.set(scope_key, $(this).val())
+    })
   });
 
 }
