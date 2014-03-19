@@ -39,7 +39,7 @@ var CherryTemplate = function(scope) {
 
     // Replace data-var and data-model
     // tags
-    $$.modelTags()
+    $$.modelTags(key,value)
     // data-eval function tags
     $$.evalTags()
   }
@@ -47,7 +47,7 @@ var CherryTemplate = function(scope) {
   // This finds data-var and
   // data-model tags and replaces
   // their contents
-  $$.modelTags = function(value) {
+  $$.modelTags = function(key,value) {
     var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]');
 
     holder.html(value).val(value);
