@@ -1,26 +1,22 @@
+var scope;
  $(function() {
 
   var counter = new Cherry()
 
-  var counterController = counter.controller('counterController', function(scope) {
-    scope.set('i', 1);
-    scope.set('amount', 1);
+  var counterController = counter.controller('counterController', function($scope) {
+    scope = $scope;
 
-    scope.set('add', function() {
-      scope.set('i', parseInt(scope.get('i')) + parseInt(scope.get('amount')))
-    })
+    $scope.i = 1;
+    $scope.amount = 1;
 
-    scope.set('take', function() {
-      scope.set('i', parseInt(scope.get('i')) - parseInt(scope.get('amount')))
-    })
+    $scope.add = function() {
+      $scope.i = parseInt($scope.i) + parseInt($scope.amount)
+    }
 
-    scope.formatter('pluralise', function(value, format) {
-      var formats = format.split(' / ');
+    $scope.take = function() {
+      $scope.i = parseInt($scope.i) - parseInt($scope.amount)
+      console.log($scope.i)
+    }
 
-      if(value == 1)
-        return formats[0]
-      else
-        return formats[1]
-    });
   });
 });

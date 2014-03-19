@@ -6,8 +6,9 @@ var Cherry = function() {
 
   _cherry.controller = function(name, callback) {
     controllers.push(name);
-    var scope = new CherryScope(_cherry, name);
+    var scope = new Scope(_cherry, name);
 
     callback(scope);
+    scope.$digest();
   }
 }
