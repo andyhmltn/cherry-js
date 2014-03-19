@@ -80,18 +80,18 @@ Scope.prototype.$init = function() {
 // it's changed from what they were before
 // it runs the listener
 Scope.prototype.$digest = function() {
-  if(this.$init()) {
-    var length = this.watchers.length;
+  if($$.$init()) {
+    var length = $$.watchers.length;
     var watcher, newValue, oldValue
 
     while(length--) {
-        watcher = this.watchers[length];
-        newValue = watcher.watchFunction(this);
+        watcher = $$.watchers[length];
+        newValue = watcher.watchFunction($$);
         oldValue = watcher.last;
 
         if(newValue !== oldValue) {
           watcher.last = newValue;
-          watcher.listenerFunction(watcher.key, newValue, oldValue, this);
+          watcher.listenerFunction(watcher.key, newValue, oldValue, $$);
         }
     }
   }
@@ -101,8 +101,8 @@ Scope.prototype.$digest = function() {
 // then running the $digest
 Scope.prototype.call = function(key,arguments) {
   // var arguments = Array.prototype.slice.call(arguments)
-  var result = this[key].apply(null, arguments)
-  this.$digest();
+  var result = $$[key].apply(null, arguments)
+  $$.$digest();
 
   return result
 }
