@@ -15,7 +15,13 @@ var scope;
 
     $scope.take = function() {
       $scope.i = parseInt($scope.i) - parseInt($scope.amount)
-      console.log($scope.i)
+    }
+
+    $scope.pluralise = function(key,singular,plural) {
+      if($scope[key] == 1)
+        return singular
+      else
+        return plural
     }
 
   });

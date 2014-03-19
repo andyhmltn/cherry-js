@@ -99,7 +99,10 @@ Scope.prototype.$digest = function() {
 
 // Short hand for calling a scope function
 // then running the $digest
-Scope.prototype.call = function(key) {
-  this[key]()
+Scope.prototype.call = function(key,arguments) {
+  // var arguments = Array.prototype.slice.call(arguments)
+  var result = this[key].apply(null, arguments)
   this.$digest();
+
+  return result
 }

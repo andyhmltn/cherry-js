@@ -10,10 +10,12 @@
   
   <div data-cherry="counterController">
     <p>There 
-      <!-- <span data-formatter="pluralise:i" data-format="is / are"></span> -->
+      {{pluralise i is are}}
+
       {{i}}
-      <!-- <span data-var="i"></span> -->
-      <!-- <span data-formatter="pluralise:i" data-format="bottle / bottles"></span> -->
+
+      {{pluralise i bottle bottles}}
+
       of beer on the wall
     </p>
     <fieldset>

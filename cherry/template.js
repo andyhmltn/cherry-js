@@ -1,91 +1,114 @@
 
 var CherryTemplate = function(scope) {
+  var $$ = this
 
-  var _template = this
-
-
-  _template.getSection = function(key) {
-    return _template.parent.find('[data-'+key+']');
+  // Short hand for finding
+  // data-* tags in the parent
+  $$.getSection = function(key) {
+    return $$.parent.find('[data-'+key+']');
   }
 
-  _template.scope = scope
+  // Assign the template it's
+  // parent scope
+  $$.scope = scope
 
-  _template.parent = $('[data-cherry="'+scope.controller+'"]');
-  _template.parent.addClass('cherry-watch');
+  // Find the parent div
+  // for the parent scope
+  $$.parent = $('[data-cherry="'+scope.controller+'"]');
+  // This class isn't used yet but will
+  // be in future... soon(tm)
+  $$.parent.addClass('cherry-watch');
 
-  _template.formatForHTML = function(string) {
+  // Stop malicious <script>alert('hey')</script>
+  // outputs
+  $$.formatForHTML = function(string) {
     return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  _template.updateFormatters = function() {
-    $(_template.getSection('formatter')).each(function(key, section) {
-      var label = $(section).attr('data-formatter').split(':');
+  // When a variable in the scope is changed, this
+  // notify function is called and it will act
+  // on the changes accordingly
+  $$.notify = function(key) {
+    // Pull the new value from the
+    // scope
+    var value = $$.formatForHTML($$.scope[key]).toString();
 
-      var _name     = label[0];
-      var parameter = label[1];
+    // Replace the tags with
+    // their tag variant
+    $$.replaceTokens()
 
-      var formatter = scope.formatters[_name];
-
-      if(typeof formatter != 'undefined') {
-        var val = scope.get(parameter);
-        var format = $(section).attr('data-format');
-
-        returned_value = formatter(val,format);
-
-        $(section).html(returned_value);
-      }
-    });
+    // Replace data-var and data-model
+    // tags
+    $$.modelTags()
+    // data-eval function tags
+    $$.evalTags()
   }
 
-  _template.notify = function(key) {
-    var value = _template.formatForHTML(_template.scope[key]).toString();
-
+  $$.modelTags = function(value) {
     var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]');
 
-    _template.replaceTokens()
-    _template.updateFormatters();
     holder.html(value).val(value);
   }
+  // The data-eval tags
+  $$.evalTags = function() {
+    $$.getSection('eval').each(function(key,value) {
+      var _tag  = $(value),
+          _call = _tag.attr('data-eval').split(' '),
+          _function_name = _call.shift(),
+          _arguments     = _call
 
+      _tag.html($$.scope.call(_function_name, _arguments))
+    });
+  }
   // Token functions
   // TODO: Comment
-  _template.tokenFormat    = /\{\{([a-z]*)\}\}/g
-  _template.formatRawToken = function(string) {
+  $$.tokenFormat    = /\{\{([a-z ]*)\}\}/g
+  $$.formatRawToken = function(string) {
     return string.replace('{{','').replace('}}','')
   }
-  _template.findTokens  = function() {
-    return _template.parent.html().match(_template.tokenFormat)
+  $$.findTokens  = function() {
+    return $$.parent.html().match($$.tokenFormat)
   }
-  _template.replaceTokens = function() {
-    var raw_tokens = _template.findTokens();
+  $$.replaceTokens = function() {
+    var raw_tokens = $$.findTokens();
 
     if(raw_tokens == null) return;
 
     for(var i=0; i<raw_tokens.length; i++) {
 
       var token  = raw_tokens[i],
-          token_formatted = _template.formatRawToken(token)
-          result = _template.scope[token_formatted]
+          token_formatted = $$.formatRawToken(token)
 
-      if(typeof result !== 'undefined') {
-        var rendered = _template.parent.html().replace(token, '<span class="cherry-var" data-var="'+token_formatted+'"></span>');
+      if(token_formatted.split(' ').length > 1) {
+        var raw = token_formatted.split(' '),
+            to_call = raw.shift()
+            arguments = raw
+        
+        var rendered = $$.parent.html().replace(token, '<span data-eval="'+token_formatted+'"></span>');
 
-        _template.parent.html(rendered)
+      } else {
+        result = $$.scope[token_formatted]
+
+        if(typeof result !== 'undefined') {
+          var rendered = $$.parent.html().replace(token, '<span class="cherry-var" data-var="'+token_formatted+'"></span>');
+
+        }
       }
-
+      
+      $$.parent.html(rendered);
     }
   }
 
   $(document).on('click', '[data-click]', function() {
     var _event = $(this).attr('data-click')
-    _template.scope.call(_event);
+    $$.scope.call(_event);
   })
 
 
   $(document).on('keyup', '[data-model]', function() {
     var scope_key  = $(this).attr('data-model')
 
-    _template.scope[scope_key] = $(this).val()
-    _template.scope.$digest()
+    $$.scope[scope_key] = $(this).val()
+    $$.scope.$digest()
   })
 }
