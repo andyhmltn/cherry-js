@@ -68,7 +68,7 @@ var CherryTemplate = function(scope) {
   }
 
   // The format for finding tokens
-  $$.tokenFormat    = /\{\{([a-z ]*)\}\}/g
+  $$.tokenFormat    = /\{\{([a-z 0-9]*)\}\}/g
 
   // Converts raw tokens {{example}} to
   // an easier variant: example

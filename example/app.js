@@ -22,5 +22,9 @@
         return plural
     }
 
+    $scope.subtractForDisplay = function(key, amount) {
+      return $scope[key] - parseInt(amount)
+    }
+
   });
 });
