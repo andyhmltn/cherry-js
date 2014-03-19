@@ -44,12 +44,18 @@ var CherryTemplate = function(scope) {
     $$.evalTags()
   }
 
+  // This finds data-var and
+  // data-model tags and replaces
+  // their contents
   $$.modelTags = function(value) {
     var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]');
 
     holder.html(value).val(value);
   }
-  // The data-eval tags
+
+  // For all data-eval tags. It
+  // calls the function with the arguments
+  // specified
   $$.evalTags = function() {
     $$.getSection('eval').each(function(key,value) {
       var _tag  = $(value),
@@ -60,15 +66,25 @@ var CherryTemplate = function(scope) {
       _tag.html($$.scope.call(_function_name, _arguments))
     });
   }
-  // Token functions
-  // TODO: Comment
+
+  // The format for finding tokens
   $$.tokenFormat    = /\{\{([a-z ]*)\}\}/g
+
+  // Converts raw tokens {{example}} to
+  // an easier variant: example
   $$.formatRawToken = function(string) {
     return string.replace('{{','').replace('}}','')
   }
+
+  // Find the tokens in the parents
+  // html markup
   $$.findTokens  = function() {
     return $$.parent.html().match($$.tokenFormat)
   }
+
+  // Find and replace the tokens
+  // with what they are needed
+  // to be
   $$.replaceTokens = function() {
     var raw_tokens = $$.findTokens();
 
@@ -79,14 +95,16 @@ var CherryTemplate = function(scope) {
       var token  = raw_tokens[i],
           token_formatted = $$.formatRawToken(token)
 
+      // If the token has arguments ({{example hello world}})
+      // then replace it as an eval tag
       if(token_formatted.split(' ').length > 1) {
         var raw = token_formatted.split(' '),
             to_call = raw.shift()
             arguments = raw
         
         var rendered = $$.parent.html().replace(token, '<span data-eval="'+token_formatted+'"></span>');
-
       } else {
+      // Else it's a data-var tag
         result = $$.scope[token_formatted]
 
         if(typeof result !== 'undefined') {
@@ -94,17 +112,22 @@ var CherryTemplate = function(scope) {
 
         }
       }
-      
+
+      // Updated with the rendered
+      // HTML
       $$.parent.html(rendered);
     }
   }
 
+  // Bindings for data-click
+  // events
   $(document).on('click', '[data-click]', function() {
     var _event = $(this).attr('data-click')
     $$.scope.call(_event);
   })
 
-
+  // Bindings for data-model
+  // inputs
   $(document).on('keyup', '[data-model]', function() {
     var scope_key  = $(this).attr('data-model')
 
