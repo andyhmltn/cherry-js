@@ -37,6 +37,7 @@ Scope.prototype.$watch = function(key,watchFunction, listenerFunction) {
     listenerFunction: listenerFunction
   }
 
+  this.watching.unshift(key)
   this.watchers.unshift(watcher)
 }
 
