@@ -48,9 +48,18 @@ var CherryTemplate = function(scope) {
   // data-model tags and replaces
   // their contents
   $$.modelTags = function(key,value) {
-    var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]');
+    var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]'),
+        length = holder.length
+    while(length--) {
+      var $me = $(holder[length]);
 
-    holder.html(value).val(value);
+
+      if($me.prop('tagName') == 'SELECT' || $me.prop('tagName') == 'INPUT') {
+        $me.val(value);
+      } else {
+        $me.html(value);
+      }
+    }
   }
 
   // For all data-eval tags. It
@@ -128,10 +137,14 @@ var CherryTemplate = function(scope) {
 
   // Bindings for data-model
   // inputs
-  $(document).on('keyup', '[data-model]', function() {
+
+  $$.updateModel = function(tag) {
     var scope_key  = $(this).attr('data-model')
 
     $$.scope[scope_key] = $(this).val()
     $$.scope.$digest()
-  })
+  }
+
+  $(document).on('keyup', '[data-model]', $$.updateModel)
+  $(document).on('change', '[data-model]', $$.updateModel)
 }
