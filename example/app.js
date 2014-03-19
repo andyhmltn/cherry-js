@@ -1,10 +1,8 @@
-var scope;
  $(function() {
 
   var counter = new Cherry()
 
   var counterController = counter.controller('counterController', function($scope) {
-    scope = $scope;
 
     $scope.i = 1;
     $scope.amount = 1;
