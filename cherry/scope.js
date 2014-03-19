@@ -80,7 +80,7 @@ Scope.prototype.$init = function() {
 // it's changed from what they were before
 // it runs the listener
 Scope.prototype.$digest = function() {
-  if($$.$init()) {
+  if(this.$init()) {
     var length = $$.watchers.length;
     var watcher, newValue, oldValue
 
