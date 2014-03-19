@@ -49,7 +49,7 @@ var CherryTemplate = function(scope) {
 
   // Token functions
   // TODO: Comment
-  _template.tokenFormat    = /\{\{(.*)\}\}/g
+  _template.tokenFormat    = /\{\{([a-z]*)\}\}/g
   _template.formatRawToken = function(string) {
     return string.replace('{{','').replace('}}','')
   }
