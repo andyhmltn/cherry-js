@@ -37,6 +37,7 @@ var CherryTemplate = function(scope) {
     // their tag variant
     $$.replaceTokens()
 
+    $$.repeatTags()
     // Replace data-var and data-model
     // tags
     $$.modelTags(key,value)
@@ -44,6 +45,87 @@ var CherryTemplate = function(scope) {
     $$.evalTags()
   }
 
+  // This is quite long and needs
+  // refactoring but hey!
+  // This is the function for repeating
+  // tags
+  $$.repeatTags = function() {
+    $$.getSection('repeat').each(function(key, value) {
+      console.log('test');
+      var $me = $(value),
+          attribute = $me.attr('data-repeat'),
+          // The arguments should be formatted
+          // as x in y
+          // so this splits that
+          args = attribute.split(' in '),
+          key = args[0].split(':'),
+          list = $$.scope[args[args.length-1]],
+          tokens = $$.findTokens($me)
+
+      // Time to replace
+      // all the child tokens in
+      // the repeating tag!
+      for(token_key in tokens) {
+        var token = tokens[token_key],
+            token_split = $$.formatRawToken(token).split('.')
+
+        // If it looks like this: item.value
+        if(token_split.length > 1) {
+          if(key == token_split[0]) {
+            var rendered = $me.html().replace(token, "<span data-repeat-child='"+token_split[token_split.length-1]+"'></span>")
+
+            $me.html(rendered)
+          }
+        }
+      }
+
+      // Don't want to keep data-repeat
+      // on the generated items
+      $me.removeAttr('data-repeat')
+
+      var length = list.length
+      while(length--) {
+        // Clone the item
+        // on each iteration
+        var $clone = $me.clone(),
+            tokens = $clone.find('[data-repeat-child]'),
+            current = list[length];
+
+        // Replace the tokens with what they
+        // need to be
+        tokens.each(function(key, value) {
+          var label = $(value).attr('data-repeat-child');
+
+          // If it's just an array use item.value
+          // to pull in the value
+          if(typeof current.length == 'number')
+            var the_value = current
+          else
+            var the_value = current[label]
+
+          $(value).replaceWith(the_value);
+        })
+
+        // Set up the data-value
+        // attribute to take from
+        // the new item
+        if($clone.attr('data-value')) {
+          if(typeof current.length == 'number') {
+            $clone.val(current)
+          } else {
+            $clone.val(current[$clone.attr('data-value')]);
+          }
+
+          $clone.removeAttr('data-value')
+        }
+
+        $me.parent().append($clone);
+      }
+
+      // Remove the original spawn
+      $me.remove()
+    })
+  }
   // This finds data-var and
   // data-model tags and replaces
   // their contents
@@ -77,7 +159,7 @@ var CherryTemplate = function(scope) {
   }
 
   // The format for finding tokens
-  $$.tokenFormat    = /\{\{([a-z 0-9A-Z]*)\}\}/g
+  $$.tokenFormat    = /\{\{([a-z 0-9A-Z.]*)\}\}/g
 
   // Converts raw tokens {{example}} to
   // an easier variant: example
@@ -87,8 +169,9 @@ var CherryTemplate = function(scope) {
 
   // Find the tokens in the parents
   // html markup
-  $$.findTokens  = function() {
-    return $$.parent.html().match($$.tokenFormat)
+  $$.findTokens  = function(parent) {
+    if(typeof parent == 'undefined') var parent = $$.parent
+    return parent.html().match($$.tokenFormat)
   }
 
   // Find and replace the tokens
