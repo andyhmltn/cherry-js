@@ -42,30 +42,50 @@ var CherryTemplate = function(scope) {
 
     var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]');
 
+    _template.replaceTokens()
     _template.updateFormatters();
-
     holder.html(value).val(value);
   }
 
+  // Token functions
+  // TODO: Comment
+  _template.tokenFormat    = /\{\{(.*)\}\}/g
+  _template.formatRawToken = function(string) {
+    return string.replace('{{','').replace('}}','')
+  }
+  _template.findTokens  = function() {
+    return _template.parent.html().match(_template.tokenFormat)
+  }
+  _template.replaceTokens = function() {
+    var raw_tokens = _template.findTokens();
 
-  _template.getSection('click').each(function(key,value) {
-    var _event = $(value).attr('data-click')
+    if(raw_tokens == null) return;
 
-    $(value).on('click', function() {
-      _template.scope.call(_event);
-    });
-  });
+    for(var i=0; i<raw_tokens.length; i++) {
 
-  _template.getSection('model').each(function(key, input) {
-    var scope_key     = $(input).attr('data-model'),
-        default_value = _template.scope[scope_key];
+      var token  = raw_tokens[i],
+          token_formatted = _template.formatRawToken(token)
+          result = _template.scope[token_formatted]
 
-    $(input).val(default_value)
+      if(typeof result !== 'undefined') {
+        var rendered = _template.parent.html().replace(token, '<span class="cherry-var" data-var="'+token_formatted+'"></span>');
 
-    $(input).on('keyup', function() {
-      _template.scope[scope_key] = $(this).val()
-      _template.scope.$digest()
-    })
-  });
+        _template.parent.html(rendered)
+      }
 
+    }
+  }
+
+  $(document).on('click', '[data-click]', function() {
+    var _event = $(this).attr('data-click')
+    _template.scope.call(_event);
+  })
+
+
+  $(document).on('keyup', '[data-model]', function() {
+    var scope_key  = $(this).attr('data-model')
+
+    _template.scope[scope_key] = $(this).val()
+    _template.scope.$digest()
+  })
 }
