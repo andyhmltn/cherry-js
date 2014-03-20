@@ -89,12 +89,34 @@ Scope.prototype.$digest = function() {
         newValue = watcher.watchFunction($$);
         oldValue = watcher.last;
 
-        if(newValue !== oldValue) {
+        var changed
+
+        if(newValue instanceof Array && oldValue instanceof Array) {
+          var comparison = $$.compareArrays(oldValue,newValue)
+
+          changed = (! comparison)
+        } else {
+          changed = (newValue !== oldValue)
+        }
+
+        if(changed) {
+          if(newValue instanceof Array) newValue = newValue.slice(0)
           watcher.last = newValue;
           watcher.listenerFunction(watcher.key, newValue, oldValue, $$);
         }
     }
   }
+}
+
+Scope.prototype.compareArrays = function(original, comparison) {
+  if (original.length != comparison.length) return false;
+  for (var i = 0; i < comparison.length; i++) {
+      if (original[i].compare) { 
+          if (!original[i].compare(comparison[i])) return false;
+      }
+      if (original[i] !== comparison[i]) return false;
+  }
+  return true;
 }
 
 // Short hand for calling a scope function
