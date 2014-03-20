@@ -1,14 +1,17 @@
 var Cherry = function() {
+  var $$ = this;
 
+  $$.controllers = []
+}
 
-  var _cherry = this;
-  var controllers = []
+Cherry.prototype.controller = function(name, callback) {
+  var $$ = this;
 
-  _cherry.controller = function(name, callback) {
-    controllers.push(name);
-    var scope = new Scope(_cherry, name);
+  var controller = new Controller(name),
+      scope      = new Scope($$, controller) 
 
-    callback(scope);
-    scope.$digest();
-  }
+  controller.addScope(scope)
+  callback(scope)
+
+  scope.$digest()
 }

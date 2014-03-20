@@ -14,7 +14,7 @@ var CherryTemplate = function(scope) {
 
   // Find the parent div
   // for the parent scope
-  $$.parent = $('[data-cherry="'+scope.controller+'"]');
+  $$.parent = $('[data-cherry="'+scope.controller.name+'"]');
   // This class isn't used yet but will
   // be in future... soon(tm)
   $$.parent.addClass('cherry-watch');

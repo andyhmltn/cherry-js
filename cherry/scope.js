@@ -123,8 +123,11 @@ Scope.prototype.compareArrays = function(original, comparison) {
 // then running the $digest
 Scope.prototype.call = function(key,arguments) {
   // var arguments = Array.prototype.slice.call(arguments)
-  var result = $$[key].apply(null, arguments)
-  $$.$digest();
+  var $$ = this
 
-  return result
+  if(typeof $$[key] !== 'undefined') {
+    var result = $$[key].apply(null, arguments)
+    $$.$digest();
+    return result
+  }
 }
