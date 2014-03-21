@@ -1,0 +1,9 @@
+{
+  "name":"cherry-js",
+  "version":"0.0.4",
+  "description":"A tiny realtime JS framework",
+  "main":"cherry.min.js",
+  "devDependencies":{
+    "gulp":">= 3.5.6"
+  }
+}
