@@ -1,7 +1,8 @@
 var Tokenizer = function(el) {
   var $$ = this
 
-  $$.el = el
+  $$.el = el.list[0]
+
   $$.tokenFormat = /\{\{([a-z 0-9A-Z.]*)\}\}/g
 
   $$.formats = {
@@ -19,7 +20,10 @@ Tokenizer.prototype.findTokens = function(parent) {
   else
     var el = parent
 
-  return el.html().match(this.tokenFormat)
+  if(typeof el != 'undefined')
+    return el.innerHTML.match(this.tokenFormat)
+  else
+    return false
 }
 Tokenizer.prototype.run = function() {
   var $$ = this,
@@ -39,14 +43,14 @@ Tokenizer.prototype.run = function() {
     else
       rendered = $$.renderVarTag(token,token_formatted)
 
-    $$.el.html(rendered)
+    $$.el.innerHTML = rendered
   }
 }
 
 Tokenizer.prototype.renderVarTag = function(token,token_formatted) {
   var $$ = this
 
-  return $$.el.html().replace(token, $$.formats['var'].replace('?', token_formatted))
+  return $$.el.innerHTML.replace(token, $$.formats['var'].replace('?', token_formatted))
 }
 
 Tokenizer.prototype.renderEvalTag = function(token,token_formatted) {
@@ -55,5 +59,5 @@ Tokenizer.prototype.renderEvalTag = function(token,token_formatted) {
       args = raw,
       to_call = raw.shift
 
-  return $$.el.html().replace(token, $$.formats['eval'].replace('?', token_formatted))
+  return $$.el.innerHTML.replace(token, $$.formats['eval'].replace('?', token_formatted))
 }

@@ -1,4 +1,4 @@
- $(function() {
+ // $(function() {
 
   var counter = new Cherry()
 
@@ -27,4 +27,4 @@
     }
 
   });
-});
+// });

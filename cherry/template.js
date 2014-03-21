@@ -14,10 +14,13 @@ var CherryTemplate = function(scope) {
 
   // Find the parent div
   // for the parent scope
-  $$.parent = $(c('[data-cherry="'+scope.controller.name+'"]'))
+  $$.parentSelector = '[data-cherry="'+scope.controller.name+'"]'
+  $$.parent = c($$.parentSelector)
   // This class isn't used yet but will
   // be in future... soon(tm)
-  $$.parent.addClass('cherry-watch');
+
+  $$.parent.addClass('cherry-watch')
+  // $$.parent.addClass('cherry-watch');
 
   $$.tokenizer = new Tokenizer($$.parent)
 
@@ -40,7 +43,7 @@ var CherryTemplate = function(scope) {
     $$.tokenizer.run()
 
     $$.showTags()
-    $$.repeatTags()
+    // $$.repeatTags()
     // Replace data-var and data-model
     // tags
     $$.modelTags(key,value)
@@ -49,11 +52,9 @@ var CherryTemplate = function(scope) {
   }
 
   $$.showTags = function() {
-    $$.getSection('show').each(function(key, value) {
-
-      var $me = $(value),
-          attribute = $me.attr('data-show'),
-          scopeVar  = $$.scope[attribute],
+    c('[data-show]').each(function(key, value) {
+      var attribute = value.attr('data-show'),
+          scopeVar  = $$.scopeVar[attribute],
           result
 
       if(typeof scopeVar == 'function')
@@ -62,9 +63,9 @@ var CherryTemplate = function(scope) {
         result = scopeVar
 
       if(result === true)
-        $me.show()
+        value.style.display = ''
       else
-        $me.hide()
+        value.style.display = 'none'
     })
   }
 
@@ -72,131 +73,64 @@ var CherryTemplate = function(scope) {
   // refactoring but hey!
   // This is the function for repeating
   // tags
-  $$.repeatTags = function() {
-    $$.getSection('repeat').each(function(key, value) {
-      var $me = $(value),
-          attribute = $me.attr('data-repeat'),
-          // The arguments should be formatted
-          // as x in y
-          // so this splits that
-          args = attribute.split(' in '),
-          key = args[0].split(':'),
-          list = $$.scope[args[args.length-1]],
-          tokens = $$.tokenizer.findTokens($me)
 
-      // Time to replace
-      // all the child tokens in
-      // the repeating tag!
-      for(token_key in tokens) {
-        var token = tokens[token_key],
-            token_split = $$.tokenizer.formatRawToken(token).split('.')
-
-        // If it looks like this: item.value
-        if(token_split.length > 1) {
-          if(key == token_split[0]) {
-            var rendered = $me.html().replace(token, "<span data-repeat-child='"+token_split[token_split.length-1]+"'></span>")
-
-            $me.html(rendered)
-          }
-        }
-      }
-
-      // Don't want to keep data-repeat
-      // on the generated items
-      $me.removeAttr('data-repeat')
-
-      var length = list.length
-      while(length--) {
-        // Clone the item
-        // on each iteration
-        var $clone = $me.clone(),
-            tokens = $clone.find('[data-repeat-child]'),
-            current = list[length];
-
-        // Replace the tokens with what they
-        // need to be
-        tokens.each(function(key, value) {
-          var label = $(value).attr('data-repeat-child');
-
-          // If it's just an array use item.value
-          // to pull in the value
-          if(typeof current.length == 'number')
-            var the_value = current
-          else
-            var the_value = current[label]
-
-          $(value).replaceWith(the_value);
-        })
-
-        // Set up the data-value
-        // attribute to take from
-        // the new item
-        if($clone.attr('data-value')) {
-          if(typeof current.length == 'number') {
-            $clone.val(current)
-          } else {
-            $clone.val(current[$clone.attr('data-value')]);
-          }
-
-          $clone.removeAttr('data-value')
-        }
-
-        $me.parent().append($clone);
-      }
-
-      // Remove the original spawn
-      $me.remove()
-    })
-  }
   // This finds data-var and
   // data-model tags and replaces
   // their contents
   $$.modelTags = function(key,value) {
-    var holder = $('[data-var="'+key+'"], [data-model="'+key+'"]'),
-        length = holder.length
-    while(length--) {
-      var $me = $(holder[length]);
+    var holder = c('[data-var="'+key+'"], [data-model="'+key+'"]')
 
-
-      if($me.prop('tagName') == 'SELECT' || $me.prop('tagName') == 'INPUT') {
-        $me.val(value);
+    holder.each(function(key, tag) {
+      if(tag.tagName == 'SELECT' || tag.tagName == 'INPUT') {
+        tag.value = value
       } else {
-        $me.html(value);
+        tag.innerHTML = value
       }
-    }
+    })
   }
 
   // For all data-eval tags. It
   // calls the function with the arguments
   // specified
   $$.evalTags = function() {
-    $$.getSection('eval').each(function(key,value) {
-      var _tag  = $(value),
-          _call = _tag.attr('data-eval').split(' '),
+    c('[data-eval]').each(function(key, value) {
+      var _tag = value,
+          _call = _tag.getAttribute('data-eval').split(' '),
           _function_name = _call.shift(),
           _arguments     = _call
 
-      _tag.html($$.scope.call(_function_name, _arguments))
-    });
+      _tag.innerHTML = $$.scope.call(_function_name, _arguments)
+    })
   }
 
-  // Bindings for data-click
-  // events
-  $(document).on('click', '[data-click]', function() {
-    var _event = $(this).attr('data-click')
-    $$.scope.call(_event);
-  })
+  $$.updateModel = function(target) {
+    var scope_key  = this.getAttribute('data-model')
 
-  // Bindings for data-model
-  // inputs
-
-  $$.updateModel = function(tag) {
-    var scope_key  = $(this).attr('data-model')
-
-    $$.scope[scope_key] = $(this).val()
+    $$.scope[scope_key] = this.value
     $$.scope.$digest()
   }
 
-  $(document).on('keyup', '[data-model]', $$.updateModel)
-  $(document).on('change', '[data-model]', $$.updateModel)
+  
+  // data-click event method
+  document.addEventListener('click', function(event) {
+    if(event.target.hasAttribute('data-click')) {
+      var _event = event.target.getAttribute('data-click')
+
+      $$.scope.call(_event);
+    }
+  })
+
+  // Model update events
+  document.addEventListener('keyup', function(event) {
+    if(event.target.hasAttribute('data-model')) {
+      $$.updateModel.call(event.target, event);
+    }
+  })
+
+  document.addEventListener('change', function(event) {
+    if(event.target.hasAttribute('data-model')) {
+      $$.updateModel.call(event.target, event);
+    }
+
+  })
 }
