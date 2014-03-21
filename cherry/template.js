@@ -19,6 +19,8 @@ var CherryTemplate = function(scope) {
   // be in future... soon(tm)
   $$.parent.addClass('cherry-watch');
 
+  $$.tokenizer = new Tokenizer($$.parent)
+
   // Stop malicious <script>alert('hey')</script>
   // outputs
   $$.formatForHTML = function(string) {
@@ -35,7 +37,7 @@ var CherryTemplate = function(scope) {
 
     // Replace the tags with
     // their tag variant
-    $$.replaceTokens()
+    $$.tokenizer.run()
 
     $$.repeatTags()
     // Replace data-var and data-model
@@ -51,7 +53,6 @@ var CherryTemplate = function(scope) {
   // tags
   $$.repeatTags = function() {
     $$.getSection('repeat').each(function(key, value) {
-      console.log('test');
       var $me = $(value),
           attribute = $me.attr('data-repeat'),
           // The arguments should be formatted
@@ -60,14 +61,14 @@ var CherryTemplate = function(scope) {
           args = attribute.split(' in '),
           key = args[0].split(':'),
           list = $$.scope[args[args.length-1]],
-          tokens = $$.findTokens($me)
+          tokens = $$.tokenizer.findTokens($me)
 
       // Time to replace
       // all the child tokens in
       // the repeating tag!
       for(token_key in tokens) {
         var token = tokens[token_key],
-            token_split = $$.formatRawToken(token).split('.')
+            token_split = $$.tokenizer.formatRawToken(token).split('.')
 
         // If it looks like this: item.value
         if(token_split.length > 1) {
@@ -156,59 +157,6 @@ var CherryTemplate = function(scope) {
 
       _tag.html($$.scope.call(_function_name, _arguments))
     });
-  }
-
-  // The format for finding tokens
-  $$.tokenFormat    = /\{\{([a-z 0-9A-Z.]*)\}\}/g
-
-  // Converts raw tokens {{example}} to
-  // an easier variant: example
-  $$.formatRawToken = function(string) {
-    return string.replace('{{','').replace('}}','')
-  }
-
-  // Find the tokens in the parents
-  // html markup
-  $$.findTokens  = function(parent) {
-    if(typeof parent == 'undefined') var parent = $$.parent
-    return parent.html().match($$.tokenFormat)
-  }
-
-  // Find and replace the tokens
-  // with what they are needed
-  // to be
-  $$.replaceTokens = function() {
-    var raw_tokens = $$.findTokens();
-
-    if(raw_tokens == null) return;
-
-    for(var i=0; i<raw_tokens.length; i++) {
-
-      var token  = raw_tokens[i],
-          token_formatted = $$.formatRawToken(token)
-
-      // If the token has arguments ({{example hello world}})
-      // then replace it as an eval tag
-      if(token_formatted.split(' ').length > 1) {
-        var raw = token_formatted.split(' '),
-            to_call = raw.shift()
-            arguments = raw
-        
-        var rendered = $$.parent.html().replace(token, '<span data-eval="'+token_formatted+'"></span>');
-      } else {
-      // Else it's a data-var tag
-        result = $$.scope[token_formatted]
-
-        if(typeof result !== 'undefined') {
-          var rendered = $$.parent.html().replace(token, '<span class="cherry-var" data-var="'+token_formatted+'"></span>');
-
-        }
-      }
-
-      // Updated with the rendered
-      // HTML
-      $$.parent.html(rendered);
-    }
   }
 
   // Bindings for data-click
