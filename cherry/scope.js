@@ -63,7 +63,7 @@ Scope.prototype.$init = function() {
         key,
         $$.$createWatcher(key),
         function(key, newValue, oldValue, scope) {
-          if(newValue) {
+          if(newValue !== false) {
             $$.template.notify(key);
           }
         }
