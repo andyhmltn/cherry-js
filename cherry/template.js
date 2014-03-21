@@ -52,13 +52,19 @@ var CherryTemplate = function(scope) {
     $$.getSection('show').each(function(key, value) {
 
       var $me = $(value),
-          attribute = $me.attr('data-show')
+          attribute = $me.attr('data-show'),
+          scopeVar  = $$.scope[attribute],
+          result
 
-      if($$.scope[attribute] === true) {
+      if(typeof scopeVar == 'function')
+        result = scopeVar.apply(null,[])
+      else
+        result = scopeVar
+
+      if(result === true)
         $me.show()
-      } else {
+      else
         $me.hide()
-      }
     })
   }
 
