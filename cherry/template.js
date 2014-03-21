@@ -39,12 +39,27 @@ var CherryTemplate = function(scope) {
     // their tag variant
     $$.tokenizer.run()
 
+    $$.showTags()
     $$.repeatTags()
     // Replace data-var and data-model
     // tags
     $$.modelTags(key,value)
     // data-eval function tags
     $$.evalTags()
+  }
+
+  $$.showTags = function() {
+    $$.getSection('show').each(function(key, value) {
+
+      var $me = $(value),
+          attribute = $me.attr('data-show')
+
+      if($$.scope[attribute] === true) {
+        $me.show()
+      } else {
+        $me.hide()
+      }
+    })
   }
 
   // This is quite long and needs
