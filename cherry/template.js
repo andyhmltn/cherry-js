@@ -2,12 +2,6 @@
 var CherryTemplate = function(scope) {
   var $$ = this
 
-  // Short hand for finding
-  // data-* tags in the parent
-  $$.getSection = function(key) {
-    return $$.parent.find('[data-'+key+']');
-  }
-
   // Assign the template it's
   // parent scope
   $$.scope = scope
@@ -20,7 +14,6 @@ var CherryTemplate = function(scope) {
   // be in future... soon(tm)
 
   $$.parent.addClass('cherry-watch')
-  // $$.parent.addClass('cherry-watch');
 
   $$.tokenizer = new Tokenizer($$.parent)
 
