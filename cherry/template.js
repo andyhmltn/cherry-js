@@ -84,8 +84,20 @@ var CherryTemplate = function(scope) {
 
       var $child   = children[x],
           scopeSelector = $child.getAttribute('data-repeat-child'),
-          key      = $child.parentNode.getAttribute('data-repeater')
+          scopeKey = $child.getAttribute('data-key'),
+          key      = $child.parentNode.getAttribute('data-repeater'),
           scopeVar = $$.scope[scopeSelector][parseInt( key )]
+
+      if(scopeKey.split('.').length > 1) {
+        scopeVar = $$.scope[scopeSelector][parseInt( key )]
+        keys  = scopeKey.split('.')
+
+        keys.shift()
+
+        for(i in keys) {
+          scopeVar = scopeVar[keys[i]]
+        }
+      }
 
       var $newNode = document.createTextNode(scopeVar)
 

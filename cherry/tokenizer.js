@@ -8,7 +8,7 @@ var Tokenizer = function(el) {
   $$.formats = {
     'eval':'<span class="cherry-eval" data-eval="?"></span>',
     'var' :'<span class="cherry-var" data-var="?"></span>',
-    'repeat':'<span class="cherry-repeat-child" data-repeat-child="?"></span>'
+    'repeat':'<span class="cherry-repeat-child" data-repeat-child="?" data-key="@"></span>'
   }
 }
 
@@ -66,7 +66,7 @@ Tokenizer.prototype.renderRepeatTags = function() {
           token_formatted = $$.formatRawToken(token),
           rendered
 
-      rendered = $me.innerHTML.replace(token, $$.formats['repeat'].replace('?', scopeVar))
+      rendered = $me.innerHTML.replace(token, $$.formats['repeat'].replace('?', scopeVar).replace('@', token_formatted))
 
       $me.innerHTML = rendered
     }
