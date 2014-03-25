@@ -46,8 +46,8 @@ var CherryTemplate = function(scope) {
 
   $$.showTags = function() {
     c('[data-show]').each(function(key, value) {
-      var attribute = value.attr('data-show'),
-          scopeVar  = $$.scopeVar[attribute],
+      var attribute = value.getAttribute('data-show'),
+          scopeVar  = $$.scope[attribute],
           result
 
       if(typeof scopeVar == 'function')
