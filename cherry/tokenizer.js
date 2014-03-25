@@ -7,7 +7,8 @@ var Tokenizer = function(el) {
 
   $$.formats = {
     'eval':'<span class="cherry-eval" data-eval="?"></span>',
-    'var' :'<span class="cherry-var" data-var="?"></span>'
+    'var' :'<span class="cherry-var" data-var="?"></span>',
+    'repeat':'<span class="cherry-repeat-child" data-repeat-child="?"></span>'
   }
 }
 
@@ -26,8 +27,11 @@ Tokenizer.prototype.findTokens = function(parent) {
     return false
 }
 Tokenizer.prototype.run = function() {
-  var $$ = this,
-      raw_tokens = $$.findTokens()
+  var $$ = this
+  
+  $$.renderRepeatTags()
+
+  var raw_tokens = $$.findTokens()
 
   if(raw_tokens == null) return
 
@@ -45,6 +49,28 @@ Tokenizer.prototype.run = function() {
 
     $$.el.innerHTML = rendered
   }
+}
+
+Tokenizer.prototype.renderRepeatTags = function() {
+  var $$ = this
+
+  c('[data-repeat]').each(function($key, $me) {
+
+    var tokens = $$.findTokens($me),
+        attribute = $me.getAttribute('data-repeat').split(' in '),
+        scopeVar  = attribute[1]
+
+
+    for(key in tokens) {
+      var token = tokens[key],
+          token_formatted = $$.formatRawToken(token),
+          rendered
+
+      rendered = $me.innerHTML.replace(token, $$.formats['repeat'].replace('?', scopeVar))
+
+      $me.innerHTML = rendered
+    }
+  })
 }
 
 Tokenizer.prototype.renderVarTag = function(token,token_formatted) {

@@ -35,6 +35,7 @@ var CherryTemplate = function(scope) {
     // their tag variant
     $$.tokenizer.run()
 
+    $$.repeatTags()
     $$.showTags()
     // $$.repeatTags()
     // Replace data-var and data-model
@@ -42,6 +43,55 @@ var CherryTemplate = function(scope) {
     $$.modelTags(key,value)
     // data-eval function tags
     $$.evalTags()
+  }
+
+  $$.repeatTags = function() {
+    var $$ = this;
+    c('[data-repeat]').each(function($key, $me) {
+
+      // Remove the repeaters
+      // that were inserted previously
+      // so they don't repeat constantly
+      var repeaters = $me.parentNode.querySelectorAll('[data-repeater]')
+
+      for(var x=0; x<repeaters.length; x++) {
+        var $node = repeaters[x]
+
+        $node.parentNode.removeChild($node)
+      }
+
+      var attribute = $me.getAttribute('data-repeat').split(' in '),
+          scopeVar  = $$.scope[attribute[1]]
+
+      for(key in scopeVar) {
+        var $clone = $me.cloneNode(true)
+
+        $clone.style.display = ''
+        $clone.removeAttribute('data-repeat')
+        $clone.setAttribute('data-repeater',key)
+
+        $me.parentNode.appendChild($clone)
+        $$.repeatTagChildren($clone)
+      }
+      $me.style.display = 'none'
+    })
+  }
+
+  $$.repeatTagChildren = function(node) {
+    var children = node.querySelectorAll('[data-repeat-child]')
+
+    for(var x=0; x<children.length; x++) {
+
+      var $child   = children[x],
+          scopeSelector = $child.getAttribute('data-repeat-child'),
+          key      = $child.parentNode.getAttribute('data-repeater')
+          scopeVar = $$.scope[scopeSelector][parseInt( key )]
+
+      var $newNode = document.createTextNode(scopeVar)
+
+      $child.parentNode.appendChild($newNode)
+      $child.parentNode.removeChild($child) 
+    }
   }
 
   $$.showTags = function() {
