@@ -38,6 +38,43 @@ Create a div with `data-cherry` set to your controller name:
 
 should display 'Hello world!'
 
+Click Actions
+--------------
+
+    //-- Controller
+    $scope.sayHello = function(world) { alert('Hello', world)}
+  
+    //-- Template
+    <button data-click="sayHello" data-arguments="world">Say Hello</button>
+
+Models / Two way binding
+--------------
+
+    //-- Template
+    <span>Hello {{place}}</span>
+    <input data-model="place">
+
+When the input is changed, the 'Hello {{phrase}}' template is magically updated
+
+Lists
+--------------
+    
+    //-- Controller
+    $scope.people = ['Andy Hamilton', 'Bob']
+
+    //-- Template
+    <ul>
+      <li data-repeat="person in people">{{person}}</li>
+    </ul>
+
+    //-- Controller
+    $scope.posts = [{title: 'Hello world!'}]
+
+    //-- Template
+    <div data-repeat="post in posts">
+      <h1>{{post.title}}</h1>
+    </div>
+
 Dependency Injection
 ---------------
 
