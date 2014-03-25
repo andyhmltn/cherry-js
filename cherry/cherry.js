@@ -3,6 +3,11 @@ var Cherry = function() {
 
   $$.controllers = []
   $$.dependencyInjector = new CherryDependency()
+  $$.dependencies = {}
+}
+
+Cherry.prototype.registerDependency = function(key, callback) {
+  this.dependencies[key] = callback
 }
 
 Cherry.prototype.controller = function(name, callback) {
@@ -14,7 +19,10 @@ Cherry.prototype.controller = function(name, callback) {
   controller.addScope(scope)
   $$.controllers.push(controller)
 
+  // Dependency injection
+  var dependencies = $$.dependencies
 
-  $$.dependencyInjector.inject(callback, {'$scope':scope})
+  dependencies['$scope'] = scope
+  $$.dependencyInjector.inject(callback, dependencies)
   scope.$digest()
 }

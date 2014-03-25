@@ -1,29 +1,18 @@
-// Dependency injection
-// Fancy!
-
 var CherryDependency = function() {
   var $$ = this
 
   $$.FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m
-  $$.default_dependencies = []
 }
 
-CherryDependency.prototype.registerDefaults = function(object) {
-  var $$ = this
-
-  for(key in object) {
-    $$.default_dependencies[key] = object[key]
-  }
-}
-
-CherryDependency.prototype.getDependencies = function(arr) {
+CherryDependency.prototype.getDependencies = function(arr, dependencies) {
   var $$ = this
 
   return arr.map(function(dependencyName) {
-    return $$.default_dependencies[dependencyName]
+    return dependencies[dependencyName]
   })
 }
-CherryDependency.prototype.inject = function(callback,defaults) {
+
+CherryDependency.prototype.inject = function(callback,dependencies) {
   var $$ = this
 
   var args = callback.toString()
@@ -31,7 +20,5 @@ CherryDependency.prototype.inject = function(callback,defaults) {
                      .split(', ').join(',')
                      .split(',')
 
-  $$.registerDefaults(defaults)
-
-  callback.apply(callback, $$.getDependencies(args))
+  callback.apply(callback, $$.getDependencies(args, dependencies))
 }
