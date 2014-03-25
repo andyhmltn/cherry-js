@@ -168,10 +168,17 @@ var CherryTemplate = function(scope) {
   
   // data-click event method
   document.addEventListener('click', function(event) {
-    if(event.target.hasAttribute('data-click')) {
-      var _event = event.target.getAttribute('data-click')
+        if(event.target.hasAttribute('data-click')) {
+      var target = event.target,
+          _event = event.target.getAttribute('data-click')
 
-      $$.scope.call(_event);
+      if(target.getAttribute('data-arguments') != null) {
+        var arguments = target.getAttribute('data-arguments').split(',')
+      } else {
+        var arguments = []
+      }
+
+      $$.scope.call(_event,arguments)
     }
   })
 
