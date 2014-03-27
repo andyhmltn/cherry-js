@@ -29,7 +29,7 @@ var CherryTemplate = function(scope) {
   $$.notify = function(key) {
     // Pull the new value from the
     // scope
-    var value = $$.formatForHTML($$.scope[key]).toString();
+    var value = $$.scope[key]
 
     // Replace the tags with
     // their tag variant
@@ -139,7 +139,7 @@ var CherryTemplate = function(scope) {
       if(tag.tagName == 'SELECT' || tag.tagName == 'INPUT') {
         tag.value = value
       } else {
-        tag.innerHTML = value
+        tag.innerHTML = $$.formatForHTML(value)
       }
     })
   }
