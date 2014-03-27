@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cherry.JS</title>
+  <link href='http://fonts.googleapis.com/css?family=Quicksand:400,700|Open+Sans:400italic,600italic,400,600,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="main container">
+    <h1>Cherry.JS</h1>
+
+    <hr>
+
+    <p>Cherry.JS is a new, incredibly lightweight, binding library (phew!) After including the script, you can easily keep your frontend DOM and your javascript in sync.</p>
+    
+
+    <div class="example container">
+      <h2>An example</h2>
+      <hr>
+      <div class="col-lg-6">
+        <pre>
+          <code>
+<span class="comment">//Javascript</span>
+var app = new Cherry()
+var controller = app.controller('myApp', function($scope) {
+  $scope.greeting = 'Hello world!'
+})
+
+<span class="comment">//Template</span>
+&lt;div data-cherry="myApp"&gt;
+  {{greeting}}
+&lt;/div&gt;
+          </code>
+        </pre>
+      </div>
+
+      <div class="col-lg-6">
+        Hello World!
+      </div>
+    </div>
+  </div>
+
+  <div class="example container">
+      <h2>Models / Two Way Binding</h2>
+      <hr>
+      <div class="col-lg-6">
+        <pre>
+          <code>
+<span class="comment">//Javascript</span>
+var app = new Cherry()
+var controller = app.controller('myApp', function($scope) {
+  $scope.place = 'world'
+})
+
+<span class="comment">//Template</span>
+//-- Template
+&lt;span&gt;Hello {{place}}&lt;/span&gt;
+&lt;input data-model="place"&gt;
+
+          </code>
+        </pre>
+      </div>
+
+      <div class="col-lg-6">
+        <div data-cherry="example2">
+          <span>Hello {{place}}!</span>
+          <hr>
+          <input type="text" data-model="place" class="form-control" placeholder="Type here!">
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="example container">
+      <h2>Show / Click Actions</h2>
+      <hr>
+      <div class="col-lg-6">
+        <pre>
+          <code>
+<span class="comment">//Javascript</span>
+var app = app.controller('app', function($scope) {
+  $scope.show_message = false;
+  $scope.toggleMessage = function() {
+      $scope.show_message = true
+  }
+})
+
+<span class="comment">//Template</span>
+&lt;button data-click="toggleMessage" class="btn btn-success"&gt;Show message&lt;/button&gt;
+
+&lt;h2 data-show="show_message"&gt;
+  Hello there!
+&lt;/h2&gt;
+
+          </code>
+        </pre>
+      </div>
+
+      <div class="col-lg-6">
+        <div data-cherry="example3">
+          <button data-click="toggleMessage" class="btn btn-success">Show message</button>
+
+          <h2 data-show="show_message">
+            Hello there!
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+      <div class="example container">
+      <h2>Todo list (repeat tags)</h2>
+      <hr>
+      <div class="col-lg-6">
+        <pre>
+          <code>
+<span class="comment">//Javascript</span>
+var app = app.controller('app', function($scope) {
+  $scope.todos = ['Check out Cherry.JS', 'Make awesome stuff']
+
+  $scope.add_todo = function() {
+    $scope.todos.push($scope.new_todo)
+
+    $scope.new_todo = ''
+  }
+})
+
+<span class="comment">//Template</span>
+&lt;ul&gt;
+  &lt;li data-repeat="todo in todos"&gt;{{todo}}&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;fieldset&gt;
+    &lt;input type="text" data-model="new_todo" class="form-control"&gt;
+    &lt;button data-click="add_todo" id="addTodo"&gt;Add Todo&lt;/button&gt;
+&lt;/fieldset&gt;
+
+          </code>
+        </pre>
+      </div>
+
+      <div class="col-lg-6">
+        <div data-cherry="example4">
+          <h2>Todos</h2>
+
+          <ul>
+            <li data-repeat="todo in todos">{{todo}}</li>
+          </ul>
+          
+          <fieldset>
+            <div class="col-lg-7">
+              <input type="text" data-model="new_todo" class="form-control">
+            </div>
+            <div class="col-lg-4">     
+              <button class="btn btn-success" data-click="add_todo" id="addTodo">Add Todo</button>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/cherry.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

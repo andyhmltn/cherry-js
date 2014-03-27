@@ -1,0 +1,24 @@
+.main.container {
+  text-align: center;
+}
+
+h1 { font-size: 5em; }
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Quicksand', sans-serif;
+}
+
+p {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.5em;
+}
+
+.example.container {
+  text-align: left;
+}
+
+pre code .comment {
+  color: #C7254E;
+}
+
+#addTodo { width: 100%;}
