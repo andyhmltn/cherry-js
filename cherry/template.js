@@ -47,7 +47,7 @@ var CherryTemplate = function(scope) {
 
   $$.repeatTags = function() {
     var $$ = this;
-    c('[data-repeat]').each(function($key, $me) {
+    $$.parent.findChild('[data-repeat]').each(function($key, $me) {
 
       // Remove the repeaters
       // that were inserted previously
@@ -107,7 +107,7 @@ var CherryTemplate = function(scope) {
   }
 
   $$.showTags = function() {
-    c('[data-show]').each(function(key, value) {
+    $$.parent.findChild('[data-show]').each(function(key, value) {
       var attribute = value.getAttribute('data-show'),
           scopeVar  = $$.scope[attribute],
           result
@@ -133,7 +133,7 @@ var CherryTemplate = function(scope) {
   // data-model tags and replaces
   // their contents
   $$.modelTags = function(key,value) {
-    var holder = c('[data-var="'+key+'"], [data-model="'+key+'"]')
+    var holder = $$.parent.findChild('[data-var="'+key+'"], [data-model="'+key+'"]')
 
     holder.each(function(key, tag) {
       if(tag.tagName == 'SELECT' || tag.tagName == 'INPUT') {
@@ -148,7 +148,7 @@ var CherryTemplate = function(scope) {
   // calls the function with the arguments
   // specified
   $$.evalTags = function() {
-    c('[data-eval]').each(function(key, value) {
+    $$.parent.findChild('[data-eval]').each(function(key, value) {
       var _tag = value,
           _call = _tag.getAttribute('data-eval').split(' '),
           _function_name = _call.shift(),

@@ -1,10 +1,15 @@
 // Find a better name for this file please
-var CherrySelector = function(argument) {
+var CherrySelector = function(argument, use_list) {
   var $$ = this
 
-  $$.list = []
+  var _use_list = use_list || false
 
-  if(typeof argument != 'undefined') this.find(argument)
+  if(! use_list) {
+    $$.list = []
+    if(typeof argument != 'undefined') this.find(argument)
+  } else {
+    $$.list = argument
+  }
 }
 
 CherrySelector.prototype.find = function(argument) {
@@ -30,6 +35,16 @@ CherrySelector.prototype.html = function(argument) {
     } else {
       return this.list[key].innerHTML
     }
+  }
+}
+
+CherrySelector.prototype.findChild = function(search) {
+  for(key in this.list) {
+
+    var result = this.list[key].querySelectorAll(search)
+
+    return new CherrySelector(result, true)
+
   }
 }
 
