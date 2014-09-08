@@ -2,7 +2,7 @@
 var CherrySelector = function(argument, use_list) {
   var $$ = this
 
-  var _use_list = use_list || false
+  var use_list = use_list || false
 
   if(! use_list) {
     $$.list = []
